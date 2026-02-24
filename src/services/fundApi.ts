@@ -157,8 +157,9 @@ export async function fetchFundValuation(
   try {
     const futuresResult = await estimateByFutures(code);
     if (futuresResult) return futuresResult;
+    console.warn(`[DEBUG] 基金 ${code} 通过期货估值失败，返回 null`);
   } catch (err) {
-    console.error(`期货估值 ${code} 失败:`, err);
+    console.error(`期货估值 ${code} 报错:`, err);
   }
 
   return null;

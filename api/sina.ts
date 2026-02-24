@@ -48,13 +48,12 @@ export default async function handler(
     }
 
     const arrayBuffer = await res.arrayBuffer();
-    // 使用 Uint8Array 转发，它在浏览器和 Node 都是标准的且 Vercel 支持
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const buffer = Buffer.from(arrayBuffer);
 
     response.setHeader("Content-Type", "text/plain; charset=gbk");
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
-    return response.status(200).send(uint8Array);
+    return response.status(200).send(buffer);
   } catch (error: any) {
     console.error("Sina Proxy Internal Error:", error);
     return response.status(500).send(`Internal Proxy Error: ${error.message}`);
