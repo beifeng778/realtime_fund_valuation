@@ -4,9 +4,30 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  // 截取 `/api/nav/` 之后的所有内容作为目标路径和参数
-  const urlParts = request.url?.split("/api/nav/");
-  const targetPath = urlParts && urlParts.length > 1 ? urlParts[1] : "";
+  const { pathRemainder } = request.query;
+  let targetPath = "";
+
+  if (pathRemainder) {
+    // Vercel 路由捕获的情况
+    targetPath = Array.isArray(pathRemainder)
+      ? pathRemainder.join("/")
+      : pathRemainder;
+    // 补回查询参数
+    const queryIdx = request.url?.indexOf("?") ?? -1;
+    if (queryIdx !== -1) {
+      // 需要移除 Vercel 注入的 pathRemainder 参数以防干扰后端
+      const fullQuery = request.url!.slice(queryIdx + 1);
+      const cleanQuery = fullQuery
+        .split("&")
+        .filter((p: string) => !p.startsWith("pathRemainder="))
+        .join("&");
+      if (cleanQuery) targetPath += "?" + cleanQuery;
+    }
+  } else {
+    // 兜底：从路径中截取
+    const urlParts = request.url?.split("/api/nav/");
+    targetPath = urlParts && urlParts.length > 1 ? urlParts[1] : "";
+  }
 
   if (!targetPath) {
     return response.status(400).send("Missing NAV path/parameters");

@@ -7,6 +7,14 @@
     {
       "source": "/api/search/:path*",
       "destination": "http://fund.eastmoney.com/js/:path*"
+    },
+    {
+      "source": "/api/sina/:pathRemainder*",
+      "destination": "/api/sina"
+    },
+    {
+      "source": "/api/nav/:pathRemainder*",
+      "destination": "/api/nav"
     }
   ]
 }

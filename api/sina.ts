@@ -8,13 +8,18 @@ export default async function handler(
   // 1. /api/sina?list=nf_AG0
   // 2. /api/sina/list=nf_AG0 (Vercel 会把后面的内容作为 path 传入)
 
-  const { list } = request.query;
+  const { list, pathRemainder } = request.query;
   let queryString = "";
 
   if (list) {
     queryString = `list=${list}`;
+  } else if (pathRemainder) {
+    // 处理 Vercel 路由捕获的情况
+    queryString = Array.isArray(pathRemainder)
+      ? pathRemainder.join("/")
+      : pathRemainder;
   } else {
-    // 尝试从原始 URL 解析，处理 /api/sina/list=... 情况
+    // 尝试从原始 URL 解析，兼容本地环境或其他情况
     const urlParts = request.url?.split("/api/sina/");
     if (urlParts && urlParts.length > 1) {
       queryString = urlParts[1];
