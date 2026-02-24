@@ -4,13 +4,14 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  const { query } = request;
-  // 获取请求参数，例如 list=nf_AG0
-  const queryString = Object.entries(query)
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&");
+  // 直接从 query 中获取 list 参数
+  const { list } = request.query;
 
-  const targetUrl = `https://hq.sinajs.cn/${queryString}`;
+  if (!list) {
+    return response.status(400).send("Missing list parameter");
+  }
+
+  const targetUrl = `https://hq.sinajs.cn/list=${list}`;
 
   try {
     const res = await fetch(targetUrl, {
@@ -22,20 +23,21 @@ export default async function handler(
     });
 
     if (!res.ok) {
-      return response
-        .status(res.status)
-        .json({ error: "Failed to fetch from Sina" });
+      console.error(`Sina API responded with status: ${res.status}`);
+      return response.status(res.status).send("Failed to fetch from Sina");
     }
 
-    // 获取原始 ArrayBuffer 以保留 GBK 编码
-    const buffer = await res.arrayBuffer();
+    // 获取数据并强制以 Buffer 形式发送，确保编码不被破坏
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    // 设置响应头，告诉浏览器这是 GBK 编码（或者直接透传，前端已经有 TextDecoder）
-    // 为了保险，我们直接透传内容的二进制流
+    // 设置正确的 Content-Type
     response.setHeader("Content-Type", "text/plain; charset=gbk");
-    return response.status(200).send(Buffer.from(buffer));
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+    return response.status(200).send(buffer);
   } catch (error) {
-    console.error("Sina Proxy Error:", error);
-    return response.status(500).json({ error: "Internal Server Error" });
+    console.error("Sina Proxy Internal Error:", error);
+    return response.status(500).send("Internal Server Error");
   }
 }
