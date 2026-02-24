@@ -4,14 +4,23 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  // 直接从 query 中获取 list 参数
+  // 获取请求参数
   const { list } = request.query;
 
   if (!list) {
-    return response.status(400).send("Missing list parameter");
+    console.error(
+      "Sina Proxy: Missing [list] parameter in query",
+      request.query,
+    );
+    return response
+      .status(400)
+      .send(
+        `Missing list parameter. Received query: ${JSON.stringify(request.query)}`,
+      );
   }
 
   const targetUrl = `https://hq.sinajs.cn/list=${list}`;
+  console.log(`Sina Proxy: Fetching from ${targetUrl}`);
 
   try {
     const res = await fetch(targetUrl, {
@@ -23,21 +32,32 @@ export default async function handler(
     });
 
     if (!res.ok) {
-      console.error(`Sina API responded with status: ${res.status}`);
-      return response.status(res.status).send("Failed to fetch from Sina");
+      const errorText = await res.text();
+      console.error(
+        `Sina API Error: ${res.status} ${res.statusText}`,
+        errorText,
+      );
+      return response
+        .status(res.status)
+        .send(`Sina API Error: ${res.status} - ${errorText}`);
     }
 
-    // 获取数据并强制以 Buffer 形式发送，确保编码不被破坏
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // 设置正确的 Content-Type
+    // 检查内容是否为空
+    if (buffer.length < 10) {
+      console.warn(
+        `Sina Proxy: Received suspiciously short response for ${list}`,
+      );
+    }
+
     response.setHeader("Content-Type", "text/plain; charset=gbk");
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
     return response.status(200).send(buffer);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Sina Proxy Internal Error:", error);
-    return response.status(500).send("Internal Server Error");
+    return response.status(500).send(`Internal Proxy Error: ${error.message}`);
   }
 }
