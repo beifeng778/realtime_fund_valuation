@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/fund/:path*",
+      "destination": "http://fundgz.1234567.com.cn/js/:path*"
+    },
+    {
+      "source": "/api/search/:path*",
+      "destination": "http://fund.eastmoney.com/js/:path*"
+    }
+  ]
+}
