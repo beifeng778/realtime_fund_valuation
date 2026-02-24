@@ -981,7 +981,7 @@ body::before {
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: var(--bg-glass);
+  background: rgba(255, 255, 255, 0.06);
   cursor: pointer;
   font-size: 14px;
   display: flex;
@@ -1039,6 +1039,19 @@ body::before {
   transition: border-color var(--transition-fast);
 }
 
+/* 自定义 number input 上下箭头 */
+.holding-item__field input[type="number"]::-webkit-inner-spin-button,
+.holding-item__field input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.holding-item__field input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 .holding-item__field input:focus {
   border-color: var(--color-accent);
 }
@@ -1051,32 +1064,37 @@ body::before {
 
 .btn-save,
 .btn-cancel {
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid transparent;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-sans);
   transition: all var(--transition-fast);
+  letter-spacing: 0.3px;
 }
 
 .btn-save {
-  background: var(--color-accent);
+  background: linear-gradient(135deg, var(--color-accent), #5558e6);
   color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 .btn-save:hover {
-  background: #5558e6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
 .btn-cancel {
-  background: var(--bg-glass);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-secondary);
+  border-color: var(--border-color);
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
 }
 
 /* ==========================================
