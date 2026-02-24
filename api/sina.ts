@@ -4,23 +4,30 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  // 获取请求参数
-  const { list } = request.query;
+  // 兼容两种请求方式：
+  // 1. /api/sina?list=nf_AG0
+  // 2. /api/sina/list=nf_AG0 (Vercel 会把后面的内容作为 path 传入)
 
-  if (!list) {
-    console.error(
-      "Sina Proxy: Missing [list] parameter in query",
-      request.query,
-    );
-    return response
-      .status(400)
-      .send(
-        `Missing list parameter. Received query: ${JSON.stringify(request.query)}`,
-      );
+  const { list } = request.query;
+  let queryString = "";
+
+  if (list) {
+    queryString = `list=${list}`;
+  } else {
+    // 尝试从原始 URL 解析，处理 /api/sina/list=... 情况
+    const urlParts = request.url?.split("/api/sina/");
+    if (urlParts && urlParts.length > 1) {
+      queryString = urlParts[1];
+    }
   }
 
-  const targetUrl = `https://hq.sinajs.cn/list=${list}`;
-  console.log(`Sina Proxy: Fetching from ${targetUrl}`);
+  if (!queryString) {
+    console.error("Sina Proxy: Missing parameters", request.url);
+    return response.status(400).send("Missing query parameters");
+  }
+
+  const targetUrl = `https://hq.sinajs.cn/${queryString}`;
+  console.log(`Sina Proxy Action: Fetching from ${targetUrl}`);
 
   try {
     const res = await fetch(targetUrl, {
@@ -32,25 +39,11 @@ export default async function handler(
     });
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error(
-        `Sina API Error: ${res.status} ${res.statusText}`,
-        errorText,
-      );
-      return response
-        .status(res.status)
-        .send(`Sina API Error: ${res.status} - ${errorText}`);
+      return response.status(res.status).send(`Sina API Error: ${res.status}`);
     }
 
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
-    // 检查内容是否为空
-    if (buffer.length < 10) {
-      console.warn(
-        `Sina Proxy: Received suspiciously short response for ${list}`,
-      );
-    }
 
     response.setHeader("Content-Type", "text/plain; charset=gbk");
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");

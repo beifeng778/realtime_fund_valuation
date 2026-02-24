@@ -4,15 +4,16 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  // 获取完整的查询字符串
-  const search = request.url?.split("?")[1] || "";
+  // 截取 `/api/nav/` 之后的所有内容作为目标路径和参数
+  const urlParts = request.url?.split("/api/nav/");
+  const targetPath = urlParts && urlParts.length > 1 ? urlParts[1] : "";
 
-  if (!search) {
-    return response.status(400).send("Missing query parameters");
+  if (!targetPath) {
+    return response.status(400).send("Missing NAV path/parameters");
   }
 
-  const targetUrl = `https://api.fund.eastmoney.com/${search}`;
-  console.log(`NAV Proxy: Fetching from ${targetUrl}`);
+  const targetUrl = `https://api.fund.eastmoney.com/${targetPath}`;
+  console.log(`NAV Proxy Action: Fetching from ${targetUrl}`);
 
   try {
     const res = await fetch(targetUrl, {
@@ -24,14 +25,7 @@ export default async function handler(
     });
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error(
-        `NAV API Error: ${res.status} ${res.statusText}`,
-        errorText,
-      );
-      return response
-        .status(res.status)
-        .send(`NAV API Error: ${res.status} - ${errorText}`);
+      return response.status(res.status).send(`NAV API Error: ${res.status}`);
     }
 
     const data = await res.json();

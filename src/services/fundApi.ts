@@ -50,7 +50,7 @@ interface FuturesQuote {
 
 async function fetchFuturesQuote(symbol: string): Promise<FuturesQuote | null> {
   try {
-    const resp = await fetch(`/api/sina?list=nf_${symbol}`);
+    const resp = await fetch(`/api/sina/list=nf_${symbol}`);
     const buffer = await resp.arrayBuffer();
     const text = new TextDecoder("gbk").decode(buffer);
 
@@ -93,7 +93,7 @@ async function fetchLatestNav(
 ): Promise<{ nav: number; date: string } | null> {
   try {
     const resp = await fetch(
-      `/api/nav?f10/lsjz&fundCode=${code}&pageIndex=1&pageSize=1`,
+      `/api/nav/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1`,
     );
     const data: LsjzResponse = await resp.json();
     if (data.ErrCode !== 0 || !data.Data?.LSJZList?.length) return null;
