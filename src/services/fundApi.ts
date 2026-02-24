@@ -93,8 +93,7 @@ async function fetchLatestNav(
 ): Promise<{ nav: number; date: string } | null> {
   try {
     const resp = await fetch(
-      `/api/nav/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1`,
-      { headers: { Referer: "https://fund.eastmoney.com" } },
+      `/api/nav?f10/lsjz&fundCode=${code}&pageIndex=1&pageSize=1`,
     );
     const data: LsjzResponse = await resp.json();
     if (data.ErrCode !== 0 || !data.Data?.LSJZList?.length) return null;

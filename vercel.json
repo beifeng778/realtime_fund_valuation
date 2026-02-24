@@ -7,11 +7,6 @@
     {
       "source": "/api/search/:path*",
       "destination": "http://fund.eastmoney.com/js/:path*"
-    },
-
-    {
-      "source": "/api/nav/:path*",
-      "destination": "https://api.fund.eastmoney.com/:path*"
     }
   ]
 }
