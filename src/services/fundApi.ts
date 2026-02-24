@@ -50,7 +50,7 @@ interface FuturesQuote {
 
 async function fetchFuturesQuote(symbol: string): Promise<FuturesQuote | null> {
   try {
-    const resp = await fetch(`/api/sina/list=nf_${symbol}`);
+    const resp = await fetch(`/api/sina?list=nf_${symbol}`);
     const buffer = await resp.arrayBuffer();
     const text = new TextDecoder("gbk").decode(buffer);
 

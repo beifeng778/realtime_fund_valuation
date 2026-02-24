@@ -9,8 +9,8 @@
       "destination": "http://fund.eastmoney.com/js/:path*"
     },
     {
-      "source": "/api/sina/:path*",
-      "destination": "https://hq.sinajs.cn/:path*"
+      "source": "/api/sina(.*)",
+      "destination": "/api/sina$1"
     },
     {
       "source": "/api/nav/:path*",
