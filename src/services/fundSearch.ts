@@ -67,21 +67,57 @@ export async function searchFunds(
   if (!keyword.trim()) return [];
 
   const kw = keyword.trim().toUpperCase();
-  const results: FundSearchItem[] = [];
+  const kwRaw = keyword.trim();
+
+  interface ScoredItem {
+    item: FundSearchItem;
+    score: number;
+  }
+
+  const scored: ScoredItem[] = [];
 
   for (const item of fundListCache) {
-    if (results.length >= limit) break;
     // 排除货币型基金（通常不看估值）
     if (item.type.includes("货币")) continue;
 
-    if (
-      item.code.includes(kw) ||
-      item.name.includes(keyword.trim()) ||
-      item.pinyin.includes(kw)
-    ) {
-      results.push(item);
+    let score = 0;
+
+    // 代码匹配
+    if (item.code === kw) {
+      score = 100; // 代码精确匹配，最高优先
+    } else if (item.code.startsWith(kw)) {
+      score = 80; // 代码前缀匹配
+    } else if (item.code.includes(kw)) {
+      score = 40; // 代码包含匹配
+    }
+
+    // 名称匹配
+    if (item.name === kwRaw) {
+      score = Math.max(score, 95); // 名称精确匹配
+    } else if (item.name.startsWith(kwRaw)) {
+      score = Math.max(score, 70); // 名称前缀匹配
+    } else if (item.name.includes(kwRaw)) {
+      score = Math.max(score, 50); // 名称包含匹配
+    }
+
+    // 拼音匹配
+    if (item.pinyin === kw) {
+      score = Math.max(score, 90); // 拼音精确匹配
+    } else if (item.pinyin.startsWith(kw)) {
+      score = Math.max(score, 60); // 拼音前缀匹配
+    } else if (item.pinyin.includes(kw)) {
+      score = Math.max(score, 30); // 拼音包含匹配
+    }
+
+    if (score > 0) {
+      scored.push({ item, score });
     }
   }
 
-  return results;
+  // 按相关性分数降序排列，同分按代码升序
+  scored.sort(
+    (a, b) => b.score - a.score || a.item.code.localeCompare(b.item.code),
+  );
+
+  return scored.slice(0, limit).map((s) => s.item);
 }
