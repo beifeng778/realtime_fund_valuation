@@ -299,7 +299,7 @@ body::before {
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.4;
-  max-width: 200px;
+  flex: 1;
 }
 
 .valuation-card__code {
