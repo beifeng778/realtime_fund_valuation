@@ -85,8 +85,17 @@ export const ValuationCard: React.FC<ValuationCardProps> = ({
     >
       <div className="valuation-card__header">
         <div>
-          <div className="valuation-card__name">{valuation.name}</div>
-          <div className="valuation-card__code">{valuation.code}</div>
+          <div className="valuation-card__name">
+            {valuation.name || fundName || fundCode}
+          </div>
+          <div className="valuation-card__code">
+            {valuation.code}
+            {valuation.futuresSource && (
+              <span className="valuation-card__futures-tag">
+                📈 {valuation.futuresSource}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -98,7 +107,9 @@ export const ValuationCard: React.FC<ValuationCardProps> = ({
           {changePercent.toFixed(2)}%
         </div>
         <div className="valuation-card__nav-section">
-          <div className="valuation-card__nav-label">预估净值</div>
+          <div className="valuation-card__nav-label">
+            {valuation.isEstimated ? "预估净值" : "实时价格"}
+          </div>
           <div className="valuation-card__nav-value number-animate">
             {valuation.estimatedNav.toFixed(4)}
           </div>
@@ -107,11 +118,14 @@ export const ValuationCard: React.FC<ValuationCardProps> = ({
 
       <div className="valuation-card__footer">
         <div className="valuation-card__time">
-          截止{" "}
-          {valuation.estimatedTime.split(" ")[1] || valuation.estimatedTime}
+          {valuation.isEstimated
+            ? `截止 ${valuation.estimatedTime.split(" ")[1] || valuation.estimatedTime}`
+            : `净值日期 ${valuation.estimatedTime}`}
         </div>
         <div className="valuation-card__yesterday">
-          上个交易日净值 {valuation.nav.toFixed(4)}
+          {valuation.isEstimated
+            ? `上个交易日净值 ${valuation.nav.toFixed(4)}`
+            : `上个交易日净值 ${valuation.nav.toFixed(4)}`}
         </div>
       </div>
     </div>

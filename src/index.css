@@ -1,39 +1,39 @@
 /* ==========================================
    基金实时估值系统 - 全局样式设计系统
-   深色金融主题 + 玻璃拟态
+   明亮白色主题
    ========================================== */
 
 :root {
   /* 色系 */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.8);
-  --bg-card-hover: rgba(26, 35, 53, 0.9);
-  --bg-glass: rgba(255, 255, 255, 0.03);
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-hover: rgba(255, 255, 255, 1);
+  --bg-glass: rgba(0, 0, 0, 0.02);
 
-  --text-primary: #e5e7eb;
-  --text-secondary: #9ca3af;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
   --text-muted: #6b7280;
 
-  --color-rise: #ef4444; /* 涨 - 红 */
-  --color-rise-bg: rgba(239, 68, 68, 0.1);
-  --color-fall: #22c55e; /* 跌 - 绿 */
-  --color-fall-bg: rgba(34, 197, 94, 0.1);
-  --color-flat: #9ca3af; /* 平 */
+  --color-rise: #e53e3e; /* 涨 - 红 */
+  --color-rise-bg: rgba(229, 62, 62, 0.08);
+  --color-fall: #38a169; /* 跌 - 绿 */
+  --color-fall-bg: rgba(56, 161, 105, 0.08);
+  --color-flat: #a0aec0; /* 平 */
 
-  --color-accent: #6366f1; /* 主强调色 */
-  --color-accent-soft: rgba(99, 102, 241, 0.15);
-  --color-warning: #f59e0b;
-  --color-warning-bg: rgba(245, 158, 11, 0.1);
-  --color-info: #3b82f6;
-  --color-info-bg: rgba(59, 130, 246, 0.08);
+  --color-accent: #5a67d8; /* 主强调色 */
+  --color-accent-soft: rgba(90, 103, 216, 0.1);
+  --color-warning: #dd6b20;
+  --color-warning-bg: rgba(221, 107, 32, 0.08);
+  --color-info: #3182ce;
+  --color-info-bg: rgba(49, 130, 206, 0.06);
 
-  --border-color: rgba(255, 255, 255, 0.06);
-  --border-color-active: rgba(99, 102, 241, 0.4);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color-active: rgba(90, 103, 216, 0.4);
 
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
-  --shadow-glow-rise: 0 0 20px rgba(239, 68, 68, 0.15);
-  --shadow-glow-fall: 0 0 20px rgba(34, 197, 94, 0.15);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-glow-rise: 0 0 20px rgba(229, 62, 62, 0.1);
+  --shadow-glow-fall: 0 0 20px rgba(56, 161, 105, 0.1);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -83,12 +83,12 @@ body::before {
   background:
     radial-gradient(
       ellipse 600px 400px at 20% 30%,
-      rgba(99, 102, 241, 0.06) 0%,
+      rgba(90, 103, 216, 0.04) 0%,
       transparent 70%
     ),
     radial-gradient(
       ellipse 500px 350px at 80% 60%,
-      rgba(34, 197, 94, 0.04) 0%,
+      rgba(56, 161, 105, 0.03) 0%,
       transparent 70%
     );
   pointer-events: none;
@@ -108,11 +108,11 @@ body::before {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* ==========================================
@@ -145,20 +145,20 @@ body::before {
 .app-header__icon {
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, var(--color-accent) 0%, #818cf8 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, #7f83f5 100%);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 16px rgba(90, 103, 216, 0.25);
 }
 
 .app-header__title {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: linear-gradient(to right, #e5e7eb 0%, #9ca3af 100%);
+  background: linear-gradient(to right, #1a1a2e 0%, #4a5568 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -307,6 +307,20 @@ body::before {
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.valuation-card__futures-tag {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .valuation-card__type-tag {
@@ -351,7 +365,7 @@ body::before {
 
 .valuation-card__nav-label {
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-bottom: 2px;
 }
 
@@ -373,13 +387,12 @@ body::before {
 
 .valuation-card__time {
   font-size: 11px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
+  color: var(--text-secondary);
 }
 
 .valuation-card__yesterday {
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 /* 数字跳动动画 */
@@ -423,9 +436,9 @@ body::before {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.04) 75%
+    rgba(0, 0, 0, 0.04) 25%,
+    rgba(0, 0, 0, 0.07) 50%,
+    rgba(0, 0, 0, 0.04) 75%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
@@ -538,7 +551,7 @@ body::before {
 
 .portfolio-item {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto;
   gap: 20px;
   align-items: center;
   padding: 12px 16px;
@@ -549,7 +562,7 @@ body::before {
 }
 
 .portfolio-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.02);
   border-color: var(--border-color);
 }
 
@@ -569,6 +582,13 @@ body::before {
   white-space: nowrap;
 }
 
+.portfolio-item__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
 .portfolio-item__change {
   font-family: var(--font-mono);
   font-size: 13px;
@@ -582,7 +602,6 @@ body::before {
   font-size: 14px;
   font-weight: 700;
   text-align: right;
-  min-width: 100px;
   white-space: nowrap;
 }
 
@@ -595,11 +614,11 @@ body::before {
   gap: 10px;
   padding: 12px 18px;
   background: var(--color-info-bg);
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(49, 130, 206, 0.15);
   border-radius: var(--radius-md);
   margin-bottom: 24px;
   font-size: 13px;
-  color: rgba(147, 197, 253, 0.9);
+  color: rgba(49, 130, 206, 0.85);
   line-height: 1.5;
 }
 
@@ -642,7 +661,7 @@ body::before {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: flex-start;
@@ -666,7 +685,7 @@ body::before {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
   animation: slideUp 0.25s ease;
   overflow: hidden;
 }
@@ -705,7 +724,7 @@ body::before {
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.06);
   color: var(--text-primary);
 }
 
@@ -784,7 +803,7 @@ body::before {
 }
 
 .search-result-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .search-result-info {
@@ -914,14 +933,14 @@ body::before {
 }
 
 .holding-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.02);
   border-color: var(--border-color);
 }
 
 .holding-item--editing {
   flex-direction: column;
   align-items: stretch;
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(90, 103, 216, 0.04);
   border-color: var(--border-color-active);
   padding: 16px;
 }
@@ -981,7 +1000,7 @@ body::before {
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.04);
   cursor: pointer;
   font-size: 14px;
   display: flex;
@@ -1087,13 +1106,13 @@ body::before {
 }
 
 .btn-cancel {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text-secondary);
   border-color: var(--border-color);
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 

@@ -50,29 +50,29 @@ export const TrendChart: React.FC<TrendChartProps> = ({
         show: true,
         top: 4,
         right: 0,
-        textStyle: { color: "#9ca3af", fontSize: 11 },
+        textStyle: { color: "#718096", fontSize: 11 },
         itemWidth: 16,
         itemHeight: 2,
       },
       tooltip: {
         trigger: "axis" as const,
-        backgroundColor: "rgba(17, 24, 39, 0.95)",
-        borderColor: "rgba(255,255,255,0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "rgba(0,0,0,0.08)",
         borderWidth: 1,
-        textStyle: { color: "#e5e7eb", fontSize: 12 },
+        textStyle: { color: "#1a1a2e", fontSize: 12 },
         formatter: (params: any) => {
           const p = params[0];
           if (!p) return "";
           const idx = p.dataIndex;
           const change = changeData[idx];
           const nav = navData[idx];
-          const color = change >= 0 ? "#ef4444" : "#22c55e";
+          const color = change >= 0 ? "#e53e3e" : "#38a169";
           const sign = change >= 0 ? "+" : "";
           return `
             <div style="font-family: Inter, sans-serif;">
-              <div style="color:#9ca3af;margin-bottom:6px;">${times[idx]}</div>
+              <div style="color:#718096;margin-bottom:6px;">${times[idx]}</div>
               <div style="font-size:16px;font-weight:700;color:${color}">${sign}${change.toFixed(2)}%</div>
-              <div style="color:#e5e7eb;margin-top:4px;">预估净值: ${nav.toFixed(4)}</div>
+              <div style="color:#1a1a2e;margin-top:4px;">预估净值: ${nav.toFixed(4)}</div>
             </div>
           `;
         },
@@ -86,10 +86,10 @@ export const TrendChart: React.FC<TrendChartProps> = ({
       xAxis: {
         type: "category" as const,
         data: times,
-        axisLine: { lineStyle: { color: "rgba(255,255,255,0.06)" } },
+        axisLine: { lineStyle: { color: "rgba(0,0,0,0.08)" } },
         axisTick: { show: false },
         axisLabel: {
-          color: "#6b7280",
+          color: "#718096",
           fontSize: 10,
           interval: Math.floor(times.length / 6),
         },
@@ -100,9 +100,9 @@ export const TrendChart: React.FC<TrendChartProps> = ({
         max: (navMax + navPadding).toFixed(4),
         axisLine: { show: false },
         axisTick: { show: false },
-        splitLine: { lineStyle: { color: "rgba(255,255,255,0.04)" } },
+        splitLine: { lineStyle: { color: "rgba(0,0,0,0.05)" } },
         axisLabel: {
-          color: "#6b7280",
+          color: "#718096",
           fontSize: 10,
           formatter: (v: number) => v.toFixed(4),
         },
@@ -117,25 +117,25 @@ export const TrendChart: React.FC<TrendChartProps> = ({
           lineStyle: {
             width: 2,
             color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-              { offset: 0, color: "#6366f1" },
-              { offset: 1, color: "#818cf8" },
+              { offset: 0, color: "#5a67d8" },
+              { offset: 1, color: "#7f83f5" },
             ]),
           },
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: "rgba(99, 102, 241, 0.15)" },
-              { offset: 1, color: "rgba(99, 102, 241, 0)" },
+              { offset: 0, color: "rgba(90, 103, 216, 0.12)" },
+              { offset: 1, color: "rgba(90, 103, 216, 0)" },
             ]),
           },
           markLine: {
             silent: true,
             symbol: "none",
-            lineStyle: { color: "rgba(255,255,255,0.1)", type: "dashed" },
+            lineStyle: { color: "rgba(0,0,0,0.12)", type: "dashed" },
             data: [{ yAxis: baseNav }],
             label: {
               show: true,
               formatter: `昨收 {c}`,
-              color: "#6b7280",
+              color: "#718096",
               fontSize: 10,
             },
           },

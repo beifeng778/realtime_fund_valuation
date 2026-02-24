@@ -22,6 +22,18 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/search/, "/js"),
       },
+      "/api/sina": {
+        target: "https://hq.sinajs.cn",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/sina/, ""),
+        headers: { Referer: "https://finance.sina.com.cn" },
+      },
+      "/api/nav": {
+        target: "https://api.fund.eastmoney.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/nav/, ""),
+        headers: { Referer: "https://fund.eastmoney.com" },
+      },
     },
   },
 });

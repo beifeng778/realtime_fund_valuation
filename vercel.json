@@ -7,6 +7,14 @@
     {
       "source": "/api/search/:path*",
       "destination": "http://fund.eastmoney.com/js/:path*"
+    },
+    {
+      "source": "/api/sina/:path*",
+      "destination": "https://hq.sinajs.cn/:path*"
+    },
+    {
+      "source": "/api/nav/:path*",
+      "destination": "https://api.fund.eastmoney.com/:path*"
     }
   ]
 }

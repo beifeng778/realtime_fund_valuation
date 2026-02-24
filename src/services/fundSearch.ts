@@ -77,9 +77,6 @@ export async function searchFunds(
   const scored: ScoredItem[] = [];
 
   for (const item of fundListCache) {
-    // 排除货币型基金（通常不看估值）
-    if (item.type.includes("货币")) continue;
-
     let score = 0;
 
     // 代码匹配

@@ -15,9 +15,11 @@ export interface FundValuation {
   name: string;
   navDate: string; // 净值日期
   nav: number; // 最新单位净值
-  estimatedNav: number; // 预估净值
+  estimatedNav: number; // 预估净值（估值模式）或最新净值（净值模式）
   estimatedChangePercent: number; // 预估涨跌幅 %
   estimatedTime: string; // 估算截止时间
+  isEstimated: boolean; // true=盘中实时估值 false=净值数据
+  futuresSource?: string; // 期货关联来源名称（如"白银连续"）
 }
 
 /** 用户持仓 */

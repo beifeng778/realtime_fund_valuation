@@ -71,32 +71,34 @@ export const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
             <div className="portfolio-item__shares">
               {item.shares.toLocaleString()} 份
             </div>
-            <div
-              className="portfolio-item__change"
-              style={{
-                color:
-                  item.changePercent > 0
-                    ? "var(--color-rise)"
-                    : item.changePercent < 0
-                      ? "var(--color-fall)"
-                      : "var(--color-flat)",
-              }}
-            >
-              {item.changePercent >= 0 ? "+" : ""}
-              {item.changePercent.toFixed(2)}%
-            </div>
-            <div
-              className="portfolio-item__profit"
-              style={{
-                color:
-                  item.profitAmount > 0
-                    ? "var(--color-rise)"
-                    : item.profitAmount < 0
-                      ? "var(--color-fall)"
-                      : "var(--color-flat)",
-              }}
-            >
-              {formatMoney(item.profitAmount)} 元
+            <div className="portfolio-item__right">
+              <div
+                className="portfolio-item__change"
+                style={{
+                  color:
+                    item.changePercent > 0
+                      ? "var(--color-rise)"
+                      : item.changePercent < 0
+                        ? "var(--color-fall)"
+                        : "var(--color-flat)",
+                }}
+              >
+                {item.changePercent >= 0 ? "+" : ""}
+                {item.changePercent.toFixed(2)}%
+              </div>
+              <div
+                className="portfolio-item__profit"
+                style={{
+                  color:
+                    item.profitAmount > 0
+                      ? "var(--color-rise)"
+                      : item.profitAmount < 0
+                        ? "var(--color-fall)"
+                        : "var(--color-flat)",
+                }}
+              >
+                {formatMoney(item.profitAmount)} 元
+              </div>
             </div>
           </div>
         ))}

@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import dayjs from "dayjs";
-import type {
-  FundValuation,
-  TrendPoint,
-  TradingSessionInfo,
-  UserHolding,
-} from "@/types";
+import type { FundValuation, TradingSessionInfo, UserHolding } from "@/types";
 import {
   loadHoldings,
   saveHoldings,
@@ -18,7 +13,7 @@ import {
   getRefreshInterval,
 } from "@/services/tradingSession";
 import { ValuationCard } from "@/components/ValuationCard";
-import { TrendChart } from "@/components/TrendChart";
+
 import { PortfolioSummary } from "@/components/PortfolioSummary";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { FundSearchModal } from "@/components/FundSearchModal";
@@ -30,9 +25,6 @@ const App: React.FC = () => {
     new Map(),
   );
   const [selectedFund, setSelectedFund] = useState<string | null>(null);
-  const [trendData, setTrendData] = useState<Map<string, TrendPoint[]>>(
-    new Map(),
-  );
   const [session, setSession] =
     useState<TradingSessionInfo>(getTradingSession());
   const [currentTime, setCurrentTime] = useState(dayjs().format("HH:mm:ss"));
@@ -74,29 +66,6 @@ const App: React.FC = () => {
           return h;
         });
         return changed ? updated : prev;
-      });
-
-      // 记录走势数据点
-      setTrendData((prev) => {
-        const next = new Map(prev);
-        const nowTime = dayjs().format("HH:mm");
-        data.forEach((val, code) => {
-          const existing = next.get(code) || [];
-          if (
-            existing.length === 0 ||
-            existing[existing.length - 1].time !== nowTime
-          ) {
-            next.set(code, [
-              ...existing,
-              {
-                time: nowTime,
-                estimatedNav: val.estimatedNav,
-                estimatedChangePercent: val.estimatedChangePercent,
-              },
-            ]);
-          }
-        });
-        return next;
       });
     }
   }, [holdings]);
@@ -153,20 +122,8 @@ const App: React.FC = () => {
 
   const handleRemoveFund = (code: string) => {
     setHoldings((prev) => removeHolding(prev, code));
-    // 清理走势数据
-    setTrendData((prev) => {
-      const next = new Map(prev);
-      next.delete(code);
-      return next;
-    });
     if (selectedFund === code) setSelectedFund(null);
   };
-
-  const selectedValuation = selectedFund
-    ? (valuations.get(selectedFund) ?? null)
-    : null;
-  const selectedTrend = selectedFund ? (trendData.get(selectedFund) ?? []) : [];
-  const selectedName = selectedValuation?.name ?? "";
 
   return (
     <div className="app-container">
@@ -227,13 +184,6 @@ const App: React.FC = () => {
           </div>
         </>
       )}
-
-      {/* 分时走势图 */}
-      <TrendChart
-        fundName={selectedName}
-        trendData={selectedTrend}
-        currentValuation={selectedValuation}
-      />
 
       {/* 持仓盈亏 */}
       <PortfolioSummary valuations={valuations} holdings={holdings} />
