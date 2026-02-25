@@ -12,9 +12,9 @@ interface ProfitItem {
   shares: number;
   costNav: number;
   changePercent: number;
-  dailyProfit: number; // 当日预估收益 = 份额 × (预估净值 - 昨日净值)
-  totalProfit: number; // 持仓总盈亏   = 份额 × (预估净值 - 成本净值)
-  totalProfitPercent: number; // 总盈亏百分比
+  dailyProfit: number;
+  totalProfit: number;
+  totalProfitPercent: number;
   estimatedNav: number;
   nav: number;
 }
@@ -62,120 +62,106 @@ export const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
   const totalHoldingProfitPercent =
     totalCost > 0 ? (totalHoldingProfit / totalCost) * 100 : 0;
 
-  const formatMoney = (v: number) => {
-    const sign = v >= 0 ? "+" : "";
-    return `${sign}${v.toFixed(2)}`;
-  };
+  const fmt = (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(2)}`;
+  const colorOf = (v: number) =>
+    v > 0
+      ? "var(--color-rise)"
+      : v < 0
+        ? "var(--color-fall)"
+        : "var(--text-muted)";
 
   return (
-    <div className="portfolio-panel">
-      <div className="portfolio-panel__header">
-        <div className="portfolio-panel__title">💰 持仓盈亏预估</div>
-        <div className="portfolio-panel__totals">
-          <div className="portfolio-panel__total">
-            <div className="portfolio-panel__total-label">当日预估收益</div>
-            <div
-              className={`portfolio-panel__total-value portfolio-panel__total-value--${
-                totalDailyProfit > 0
-                  ? "rise"
-                  : totalDailyProfit < 0
-                    ? "fall"
-                    : ""
-              } number-animate`}
+    <div className="pf-panel">
+      {/* ---- 汇总区域 ---- */}
+      <div className="pf-header">
+        <div className="pf-header__title">💰 持仓盈亏预估</div>
+        <div className="pf-header__cards">
+          <div className="pf-stat-card">
+            <span className="pf-stat-card__label">当日预估</span>
+            <span
+              className="pf-stat-card__value"
+              style={{ color: colorOf(totalDailyProfit) }}
             >
-              {formatMoney(totalDailyProfit)} 元
-            </div>
+              {fmt(totalDailyProfit)}
+              <small>元</small>
+            </span>
           </div>
-          <div className="portfolio-panel__total">
-            <div className="portfolio-panel__total-label">持仓总盈亏</div>
-            <div
-              className={`portfolio-panel__total-value portfolio-panel__total-value--${
-                totalHoldingProfit > 0
-                  ? "rise"
-                  : totalHoldingProfit < 0
-                    ? "fall"
-                    : ""
-              } number-animate`}
+          <div className="pf-stat-card">
+            <span className="pf-stat-card__label">持仓总盈亏</span>
+            <span
+              className="pf-stat-card__value"
+              style={{ color: colorOf(totalHoldingProfit) }}
             >
-              {formatMoney(totalHoldingProfit)} 元
-              <span className="portfolio-panel__total-percent">
-                ({formatMoney(totalHoldingProfitPercent)}%)
+              {fmt(totalHoldingProfit)}
+              <small>元</small>
+              <span className="pf-stat-card__pct">
+                {fmt(totalHoldingProfitPercent)}%
               </span>
-            </div>
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="portfolio-list">
-        {items.map((item) => (
-          <div key={item.code} className="portfolio-item">
-            <div className="portfolio-item__info">
-              <div className="portfolio-item__name">{item.name}</div>
-              <div className="portfolio-item__meta">
-                {item.shares.toLocaleString()} 份 · 成本{" "}
-                {item.costNav.toFixed(4)}
+      {/* ---- 逐基金明细 ---- */}
+      <div className="pf-list">
+        {items.map((item) => {
+          const accent = colorOf(item.dailyProfit);
+          return (
+            <div
+              key={item.code}
+              className="pf-fund"
+              style={{ borderLeftColor: accent }}
+            >
+              <div className="pf-fund__left">
+                <div className="pf-fund__name">{item.name}</div>
+                <div className="pf-fund__meta">
+                  {item.shares.toLocaleString()}份 · 成本{" "}
+                  {item.costNav.toFixed(4)}
+                </div>
+              </div>
+              <div className="pf-fund__right">
+                <div className="pf-fund__row">
+                  <span
+                    className={`pf-fund__tag ${item.changePercent >= 0 ? "pf-fund__tag--rise" : "pf-fund__tag--fall"}`}
+                  >
+                    今日
+                  </span>
+                  <span
+                    className="pf-fund__pct"
+                    style={{ color: colorOf(item.changePercent) }}
+                  >
+                    {fmt(item.changePercent)}%
+                  </span>
+                  <span
+                    className="pf-fund__amt"
+                    style={{ color: colorOf(item.dailyProfit) }}
+                  >
+                    {fmt(item.dailyProfit)}元
+                  </span>
+                </div>
+                <div className="pf-fund__row">
+                  <span
+                    className={`pf-fund__tag ${item.totalProfit >= 0 ? "pf-fund__tag--rise" : "pf-fund__tag--fall"}`}
+                  >
+                    总盈亏
+                  </span>
+                  <span
+                    className="pf-fund__pct"
+                    style={{ color: colorOf(item.totalProfit) }}
+                  >
+                    {fmt(item.totalProfitPercent)}%
+                  </span>
+                  <span
+                    className="pf-fund__amt"
+                    style={{ color: colorOf(item.totalProfit) }}
+                  >
+                    {fmt(item.totalProfit)}元
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="portfolio-item__right">
-              <span className="portfolio-item__label">当日</span>
-              <span
-                className="portfolio-item__pct"
-                style={{
-                  color:
-                    item.changePercent > 0
-                      ? "var(--color-rise)"
-                      : item.changePercent < 0
-                        ? "var(--color-fall)"
-                        : "var(--color-flat)",
-                }}
-              >
-                {item.changePercent >= 0 ? "+" : ""}
-                {item.changePercent.toFixed(2)}%
-              </span>
-              <span
-                className="portfolio-item__amt"
-                style={{
-                  color:
-                    item.dailyProfit > 0
-                      ? "var(--color-rise)"
-                      : item.dailyProfit < 0
-                        ? "var(--color-fall)"
-                        : "var(--color-flat)",
-                }}
-              >
-                {formatMoney(item.dailyProfit)}元
-              </span>
-
-              <span className="portfolio-item__label">总盈亏</span>
-              <span
-                className="portfolio-item__pct"
-                style={{
-                  color:
-                    item.totalProfit > 0
-                      ? "var(--color-rise)"
-                      : item.totalProfit < 0
-                        ? "var(--color-fall)"
-                        : "var(--color-flat)",
-                }}
-              >
-                {formatMoney(item.totalProfitPercent)}%
-              </span>
-              <span
-                className="portfolio-item__amt"
-                style={{
-                  color:
-                    item.totalProfit > 0
-                      ? "var(--color-rise)"
-                      : item.totalProfit < 0
-                        ? "var(--color-fall)"
-                        : "var(--color-flat)",
-                }}
-              >
-                {formatMoney(item.totalProfit)}元
-              </span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
