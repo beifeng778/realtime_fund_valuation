@@ -60,10 +60,19 @@ async function fetchFuturesQuote(symbol: string): Promise<FuturesQuote | null> {
 
     const fields = match[1].split(",");
     const name = fields[0]; // 期货名称
-    const latestPrice = parseFloat(fields[5]); // 最新价
-    const prevClose = parseFloat(fields[10]); // 昨收
 
-    if (!latestPrice || !prevClose) return null;
+    // 字段5=最新价, 字段6=买一价, 字段8=结算价
+    // 中午休市时字段5可能为0，需要使用备选字段
+    const candidates = [
+      parseFloat(fields[5]), // 最新价
+      parseFloat(fields[6]), // 买一价
+      parseFloat(fields[8]), // 结算价
+      parseFloat(fields[3]), // 最高价
+    ];
+    const latestPrice = candidates.find((p) => !isNaN(p) && p > 0);
+    const prevClose = parseFloat(fields[10]); // 昨收盘
+
+    if (!latestPrice || isNaN(prevClose) || prevClose === 0) return null;
 
     return {
       name,
