@@ -100,18 +100,28 @@ interface LsjzResponse {
 async function fetchLatestNav(
   code: string,
 ): Promise<{ nav: number; date: string } | null> {
-  try {
+  const doFetch = async (): Promise<{ nav: number; date: string } | null> => {
     const resp = await fetch(
       `/api/nav/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1`,
     );
+    if (!resp.ok) return null;
     const data: LsjzResponse = await resp.json();
     if (data.ErrCode !== 0 || !data.Data?.LSJZList?.length) return null;
-
     const item = data.Data.LSJZList[0];
     return { nav: parseFloat(item.DWJZ), date: item.FSRQ };
+  };
+
+  try {
+    return await doFetch();
   } catch (err) {
-    console.error(`获取基金 ${code} 净值失败:`, err);
-    return null;
+    console.warn(`fetchLatestNav(${code}) 首次失败，500ms后重试...`, err);
+    await new Promise((r) => setTimeout(r, 500));
+    try {
+      return await doFetch();
+    } catch (retryErr) {
+      console.error(`fetchLatestNav(${code}) 重试仍失败:`, retryErr);
+      return null;
+    }
   }
 }
 

@@ -1,5 +1,49 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+const NAV_TIMEOUT_MS = 8000;
+const MAX_RETRIES = 2;
+
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  retries: number,
+): Promise<Response> {
+  let lastError: Error | null = null;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const res = await fetchWithTimeout(url, options, NAV_TIMEOUT_MS);
+      if (res.ok) return res;
+      // 非 200 但不是网络错误，直接返回让调用方处理
+      return res;
+    } catch (err: any) {
+      lastError = err;
+      console.warn(
+        `NAV fetch attempt ${i + 1}/${retries + 1} failed:`,
+        err.message,
+      );
+      if (i < retries) {
+        // 短暂等待后重试（200ms、400ms）
+        await new Promise((r) => setTimeout(r, (i + 1) * 200));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
@@ -34,16 +78,20 @@ export default async function handler(
   }
 
   const targetUrl = `https://api.fund.eastmoney.com/${targetPath}`;
-  console.log(`NAV Proxy Action: Fetching from ${targetUrl}`);
+  console.log(`NAV Proxy: Fetching from ${targetUrl}`);
 
   try {
-    const res = await fetch(targetUrl, {
-      headers: {
-        Referer: "https://fund.eastmoney.com",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    const res = await fetchWithRetry(
+      targetUrl,
+      {
+        headers: {
+          Referer: "https://fund.eastmoney.com",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
       },
-    });
+      MAX_RETRIES,
+    );
 
     if (!res.ok) {
       return response.status(res.status).send(`NAV API Error: ${res.status}`);
@@ -52,11 +100,19 @@ export default async function handler(
     const data = await res.json();
 
     response.setHeader("Content-Type", "application/json");
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
 
     return response.status(200).json(data);
   } catch (error: any) {
-    console.error("NAV Proxy Internal Error:", error);
-    return response.status(500).send(`Internal Proxy Error: ${error.message}`);
+    const isTimeout = error.name === "AbortError";
+    console.error(
+      `NAV Proxy Error [${isTimeout ? "TIMEOUT" : "NETWORK"}]:`,
+      error.message,
+    );
+    return response
+      .status(isTimeout ? 504 : 502)
+      .send(
+        `NAV Proxy ${isTimeout ? "Timeout" : "Network Error"}: ${error.message}`,
+      );
   }
 }
