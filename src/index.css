@@ -509,7 +509,7 @@ body::before {
 
 .portfolio-panel__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 20px;
 }
@@ -517,6 +517,12 @@ body::before {
 .portfolio-panel__title {
   font-size: 16px;
   font-weight: 600;
+}
+
+.portfolio-panel__totals {
+  display: flex;
+  gap: 24px;
+  text-align: right;
 }
 
 .portfolio-panel__total {
@@ -531,9 +537,16 @@ body::before {
 
 .portfolio-panel__total-value {
   font-family: var(--font-mono);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.5px;
+}
+
+.portfolio-panel__total-percent {
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 4px;
+  opacity: 0.8;
 }
 
 .portfolio-panel__total-value--rise {
@@ -551,7 +564,7 @@ body::before {
 
 .portfolio-item {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   gap: 20px;
   align-items: center;
   padding: 12px 16px;
@@ -566,6 +579,10 @@ body::before {
   border-color: var(--border-color);
 }
 
+.portfolio-item__info {
+  min-width: 0;
+}
+
 .portfolio-item__name {
   font-size: 14px;
   font-weight: 500;
@@ -574,35 +591,44 @@ body::before {
   text-overflow: ellipsis;
 }
 
-.portfolio-item__shares {
+.portfolio-item__meta {
   font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-secondary);
-  text-align: right;
-  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 .portfolio-item__right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-.portfolio-item__change {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 4px 8px;
+  align-items: center;
+  justify-items: end;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
-  text-align: right;
   white-space: nowrap;
 }
 
-.portfolio-item__profit {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 700;
+.portfolio-item__label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.03);
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-align: center;
+  justify-self: end;
+}
+
+.portfolio-item__pct {
   text-align: right;
-  white-space: nowrap;
+}
+
+.portfolio-item__amt {
+  text-align: right;
 }
 
 /* ==========================================
@@ -1140,16 +1166,21 @@ body::before {
   }
 
   .portfolio-item {
-    grid-template-columns: 1fr auto;
     gap: 8px;
   }
 
-  .portfolio-item__shares {
-    display: none;
+  .portfolio-panel__header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .portfolio-panel__totals {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .portfolio-panel__total-value {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   /* 持仓编辑器移动端适配 */
